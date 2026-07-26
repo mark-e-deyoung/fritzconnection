@@ -6,19 +6,30 @@ The purpose of the fork is to research, implement, validate, and offer narrowly
 scoped improvements back to the original project. It is not intended to replace,
 rename, or subsume the upstream project.
 
+The fork values precision over breadth. The desired outcome is a small number of
+exceptional, sustainable contributions rather than a large body of automatically
+generated code.
+
 ## Governing principles
 
 1. Preserve the upstream author's architecture, style, and project identity.
-2. Keep upstream mirror branches free of fork-only changes.
-3. Develop one understandable capability at a time.
-4. Separate protocol research from code proposed for upstream inclusion.
-5. Open or reference an upstream issue before investing in a substantial PR.
-6. Require human review and ownership of all machine-assisted contributions.
-7. Prefer documented FRITZ!Box interfaces over firmware-specific internal APIs.
-8. Clearly label experimental features that rely on undocumented interfaces.
-9. Validate behavior with unit tests and, where needed, an identified router and
-   FRITZ!OS version.
-10. Make every upstream candidate independently reviewable and removable.
+2. Treat no change as the default; require a specific, demonstrated need.
+3. Keep upstream mirror branches free of fork-only changes.
+4. Develop one understandable capability at a time.
+5. Separate protocol research from code proposed for upstream inclusion.
+6. Open or reference an upstream issue before investing in a substantial PR.
+7. Require human review and ownership of all machine-assisted contributions.
+8. Prefer documented FRITZ!Box interfaces over firmware-specific internal APIs.
+9. Clearly label experimental features that rely on undocumented interfaces.
+10. Validate behavior with unit tests and, where needed, an identified router and
+    FRITZ!OS version.
+11. Treat `fritzconnection/core/` as stable and avoid changing it for normal
+    feature work.
+12. Make every upstream candidate independently reviewable, removable, and
+    proportionate to its maintenance burden.
+
+Completeness of FRITZ!OS coverage is not itself a reason to add a feature. Each
+candidate must solve a stated problem and fit the upstream maintainer's direction.
 
 ## Branch model
 
@@ -54,6 +65,8 @@ docs/sources/library_modules.rst
 
 Changes to `fritzconnection/core/` require an explicit, reusable need and should
 normally be proposed separately from the high-level feature that consumes them.
+A feature branch must not contain speculative core refactoring, cleanup, or
+modernization.
 
 ## Fork-only material
 
@@ -64,6 +77,7 @@ or included accidentally in upstream PRs.
 
 ## Related documents
 
+- [Contribution doctrine](CONTRIBUTION_DOCTRINE.md)
 - [Upstream contribution workflow](UPSTREAM_WORKFLOW.md)
 - [Style and human review policy](STYLE_AND_REVIEW.md)
 - [Feature contribution checklist](FEATURE_CHECKLIST.md)
