@@ -78,6 +78,7 @@ or included accidentally in upstream PRs.
 ## Related documents
 
 - [Contribution doctrine](CONTRIBUTION_DOCTRINE.md)
+- [Focused upstream PR roadmap](PR_ROADMAP.md)
 - [Upstream contribution workflow](UPSTREAM_WORKFLOW.md)
 - [Style and human review policy](STYLE_AND_REVIEW.md)
 - [Feature contribution checklist](FEATURE_CHECKLIST.md)
