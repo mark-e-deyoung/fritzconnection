@@ -2,12 +2,17 @@
 
 Use this checklist for every branch intended to become an upstream PR.
 
-## Scope and discussion
+## Need and scope
 
-- [ ] The feature solves one clearly stated problem.
+- [ ] The feature solves one clearly stated user or maintainer problem.
+- [ ] The feature is not being added merely for FRITZ!OS API completeness.
 - [ ] Existing upstream issues and PRs were searched.
 - [ ] A substantial feature has an upstream issue or maintainer discussion.
 - [ ] The intended upstream base branch is confirmed.
+- [ ] The smallest useful increment is identified.
+- [ ] Out-of-scope behavior is stated explicitly.
+- [ ] Existing low-level APIs, documentation, or an example cannot satisfy the
+      need adequately without a new public wrapper.
 - [ ] The work is not better divided into a low-level helper PR and a separate
       consumer PR.
 
@@ -28,6 +33,7 @@ Use this checklist for every branch intended to become an upstream PR.
 - [ ] Read-only, mutating, and destructive operations are identified.
 - [ ] Router model and FRITZ!OS version are recorded where relevant.
 - [ ] Undocumented behavior is clearly labeled experimental.
+- [ ] No production behavior depends on guessed fields or identifiers.
 
 ## Repository fit
 
@@ -36,9 +42,25 @@ Use this checklist for every branch intended to become an upstream PR.
       patterns where appropriate.
 - [ ] Existing sessions, authentication, exceptions, and helpers are reused.
 - [ ] New runtime dependencies were avoided.
-- [ ] Core changes are generic and independently justified.
+- [ ] `fritzconnection/core/` is unchanged unless a separately justified generic
+      need was agreed with upstream.
+- [ ] Any core change is independently understandable, backward compatible, and
+      free of feature-specific assumptions.
 - [ ] The feature does not include unrelated modernization or formatting.
 - [ ] Public names and return forms are consistent with neighboring APIs.
+- [ ] The implementation introduces no new project-wide pattern.
+
+## Sustainability
+
+- [ ] The demonstrated user value justifies the likely maintenance burden.
+- [ ] A documented interface is used whenever possible.
+- [ ] Firmware- or model-specific behavior is localized.
+- [ ] The feature can be removed without affecting unrelated behavior.
+- [ ] The feature does not require fork-only tools or knowledge to maintain.
+- [ ] Compatibility, permissions, limitations, and risk are documented.
+- [ ] The implementation is smaller and clearer than the maintenance problem it
+      creates.
+- [ ] Broad generated coverage was reduced to the minimum useful behavior.
 
 ## Safety and privacy
 
@@ -54,6 +76,8 @@ Use this checklist for every branch intended to become an upstream PR.
 - [ ] Unit tests cover successful behavior.
 - [ ] Tests cover authorization, malformed responses, and missing data where
       relevant.
+- [ ] Tests would fail for a real behavioral defect rather than merely mirror the
+      implementation.
 - [ ] Parsers use sanitized fixtures when realistic payloads matter.
 - [ ] Model- or firmware-dependent behavior has an opt-in `routertest` or a
       manual validation record.
@@ -78,6 +102,8 @@ Use this checklist for every branch intended to become an upstream PR.
 - [ ] The contributor independently verified protocol and API assumptions.
 - [ ] Tests were reviewed for meaningful assertions.
 - [ ] Error handling and destructive behavior were manually reviewed.
+- [ ] Backward compatibility and core non-interference were reviewed.
+- [ ] The contributor accepts the long-term maintenance implications.
 - [ ] Meaningful machine assistance will be disclosed in the PR.
 
 ## Final diff
@@ -87,6 +113,10 @@ Use this checklist for every branch intended to become an upstream PR.
 - [ ] The full diff contains no unrelated files or changes.
 - [ ] The commit log contains one to three understandable commits when practical.
 - [ ] Fork-governance documents and experimental artifacts are absent.
-- [ ] The PR description states what changed, why, validation performed, and
-      known limitations.
+- [ ] The PR description states what changed, why, validation performed, known
+      limitations, and explicit out-of-scope behavior.
+- [ ] The PR explains why the public API and maintenance burden are justified.
 - [ ] The PR is opened as a draft until validation is complete.
+
+A candidate that cannot satisfy these checks should be reduced, retained as an
+experiment, or maintained as a separate application rather than offered upstream.
