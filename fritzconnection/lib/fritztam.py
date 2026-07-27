@@ -134,6 +134,19 @@ class FritzTAM(AbstractLibraryBase):
             NewMessageIndex=message_index,
         )
 
+    def delete_message(self, index: int, message_index: int) -> None:
+        """
+        Permanently delete one explicitly selected voicemail message.
+
+        *index* selects the answering machine and *message_index* must be
+        the stable index from the message list.
+        """
+        self._action(
+            'DeleteMessage',
+            NewIndex=index,
+            NewMessageIndex=message_index,
+        )
+
 
 @processor
 class TAMListItem:
