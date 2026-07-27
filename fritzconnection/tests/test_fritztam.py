@@ -5,7 +5,6 @@ import pytest
 from fritzconnection.lib import fritztam
 from fritzconnection.lib.fritztam import FritzTAM
 
-
 TAM_LIST_XML = """\
 <List>
   <TAMRunning>1</TAMRunning>

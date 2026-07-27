@@ -12,31 +12,18 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from xml.etree import ElementTree as etree
 
 from ..core.processor import (
-    processor,
-    process_node,
     InstanceAttributeFactory,
     Storage,
+    process_node,
+    processor,
 )
-from ..core.utils import get_xml_root
+from ..core.utils import get_boolean_from_string, get_xml_root
 from .fritzbase import AbstractLibraryBase
-
 
 __all__ = ['FritzTAM', 'TAMList', 'TAMListItem', 'TAMMessage']
 
 
 SERVICE = 'X_AVM-DE_TAM1'
-
-
-def _boolean(value):
-    """Convert a FRITZ!Box boolean value to bool."""
-    if isinstance(value, bool):
-        return value
-    return str(value).strip().lower() in ('1', 'true', 'yes', 'on')
-
-
-def _integer(value):
-    """Convert a FRITZ!Box integer value to int or preserve None."""
-    return None if value is None else int(value)
 
 
 def _set_url_parameter(url, name, value):
@@ -118,17 +105,19 @@ class TAMListItem:
     @property
     def index(self) -> int | None:
         """Integer answering-machine index."""
-        return _integer(self.Index)
+        if self.Index is None:
+            return None
+        return int(self.Index)
 
     @property
     def display(self) -> bool:
         """Whether the answering machine is displayed in the web interface."""
-        return _boolean(self.Display)
+        return get_boolean_from_string(self.Display, default=False)
 
     @property
     def enabled(self) -> bool:
         """Whether the answering machine is enabled."""
-        return _boolean(self.Enable)
+        return get_boolean_from_string(self.Enable, default=False)
 
     @property
     def name(self) -> str | None:
@@ -147,29 +136,35 @@ class TAMList(Storage):
         self.Stick = None
         self.Status = None
         self.Capacity = None
-        self.items = list()
+        self.items = []
         super().__init__(self.items)
         process_node(self, root)
 
     @property
     def running(self) -> bool:
         """Whether the answering-machine service is running."""
-        return _boolean(self.TAMRunning)
+        return get_boolean_from_string(self.TAMRunning, default=False)
 
     @property
     def stick(self) -> int | None:
         """USB storage state reported by the FRITZ!Box."""
-        return _integer(self.Stick)
+        if self.Stick is None:
+            return None
+        return int(self.Stick)
 
     @property
     def status(self) -> int | None:
         """Global answering-machine status bit field."""
-        return _integer(self.Status)
+        if self.Status is None:
+            return None
+        return int(self.Status)
 
     @property
     def capacity(self) -> int | None:
         """Remaining recording capacity in minutes."""
-        return _integer(self.Capacity)
+        if self.Capacity is None:
+            return None
+        return int(self.Capacity)
 
     def __iter__(self):
         return iter(self.items)
@@ -194,17 +189,21 @@ class TAMMessage:
     @property
     def index(self) -> int | None:
         """Stable message index used by message actions."""
-        return _integer(self.Index)
+        if self.Index is None:
+            return None
+        return int(self.Index)
 
     @property
     def tam_index(self) -> int | None:
         """Index of the answering machine containing the message."""
-        return _integer(self.Tam)
+        if self.Tam is None:
+            return None
+        return int(self.Tam)
 
     @property
     def in_phonebook(self) -> bool:
         """Whether the caller is stored in a phonebook."""
-        return _boolean(self.Inbook)
+        return get_boolean_from_string(self.Inbook, default=False)
 
     @property
     def is_new(self) -> bool:
@@ -228,6 +227,6 @@ class TAMMessageCollection(Storage):
     Message = InstanceAttributeFactory(TAMMessage)
 
     def __init__(self, root):
-        self.messages = list()
+        self.messages = []
         super().__init__(self.messages)
         process_node(self, root)
