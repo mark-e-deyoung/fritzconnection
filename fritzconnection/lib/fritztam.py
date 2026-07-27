@@ -52,6 +52,16 @@ class FritzTAM(AbstractLibraryBase):
     def _action(self, actionname, **kwargs):
         return self.fc.call_action(SERVICE, actionname, **kwargs)
 
+    def set_enabled(self, index: int, enabled: bool = True) -> None:
+        """
+        Enable or disable the answering machine selected by *index*.
+        """
+        self._action(
+            'SetEnable',
+            NewIndex=index,
+            NewEnable=enabled,
+        )
+
     def get_info(self, index: int = 0) -> dict:
         """
         Return information about the answering machine selected by *index*.
