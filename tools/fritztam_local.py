@@ -18,6 +18,13 @@ _PRIVATE_FIELD_PARTS = (
     'path',
     'phone',
 )
+_MUTATING_COMMANDS = (
+    'enable',
+    'disable',
+    'mark-read',
+    'mark-unread',
+    'delete',
+)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -152,12 +159,47 @@ def _list_messages(
         print(' '.join(values))
 
 
-def _require_apply(args: argparse.Namespace, description: str) -> bool:
-    if args.apply:
-        return True
-    print(f'DRY RUN: {description}')
-    print('Repeat the command with --apply to make the change.')
-    return False
+def _mutation_description(args: argparse.Namespace) -> str:
+    if args.command in ('enable', 'disable'):
+        enabled = args.command == 'enable'
+        return (
+            f'set answering machine {args.tam_index} '
+            f'enabled={enabled}'
+        )
+    if args.command in ('mark-read', 'mark-unread'):
+        read = args.command == 'mark-read'
+        return (
+            f'mark TAM {args.tam_index} message '
+            f'{args.message_index} read={read}'
+        )
+    if args.command == 'delete':
+        return (
+            f'permanently delete TAM {args.tam_index} '
+            f'message {args.message_index}'
+        )
+    raise AssertionError(args.command)
+
+
+def _preflight(args: argparse.Namespace) -> int | None:
+    if args.command not in _MUTATING_COMMANDS:
+        return None
+
+    description = _mutation_description(args)
+    if not args.apply:
+        print(f'DRY RUN: {description}')
+        print('Repeat the command with --apply to make the change.')
+        return 0
+
+    if args.command == 'delete':
+        expected = f'DELETE:{args.tam_index}:{args.message_index}'
+        if args.confirm != expected:
+            print('Deletion refused.', file=sys.stderr)
+            print(
+                f'Use --confirm {expected!r} for this exact message.',
+                file=sys.stderr,
+            )
+            return 2
+    return None
 
 
 def _run(args: argparse.Namespace, tam: FritzTAM) -> int:
@@ -180,47 +222,23 @@ def _run(args: argparse.Namespace, tam: FritzTAM) -> int:
 
     if args.command in ('enable', 'disable'):
         enabled = args.command == 'enable'
-        description = (
-            f'set answering machine {args.tam_index} '
-            f'enabled={enabled}'
-        )
-        if _require_apply(args, description):
-            tam.set_enabled(args.tam_index, enabled=enabled)
-            print('Applied:', description)
+        tam.set_enabled(args.tam_index, enabled=enabled)
+        print('Applied:', _mutation_description(args))
         return 0
 
     if args.command in ('mark-read', 'mark-unread'):
         read = args.command == 'mark-read'
-        description = (
-            f'mark TAM {args.tam_index} message '
-            f'{args.message_index} read={read}'
+        tam.mark_message(
+            args.tam_index,
+            args.message_index,
+            read=read,
         )
-        if _require_apply(args, description):
-            tam.mark_message(
-                args.tam_index,
-                args.message_index,
-                read=read,
-            )
-            print('Applied:', description)
+        print('Applied:', _mutation_description(args))
         return 0
 
     if args.command == 'delete':
-        description = (
-            f'permanently delete TAM {args.tam_index} '
-            f'message {args.message_index}'
-        )
-        if not _require_apply(args, description):
-            return 0
-        expected = f'DELETE:{args.tam_index}:{args.message_index}'
-        if args.confirm != expected:
-            print('Deletion refused.', file=sys.stderr)
-            print(
-                f'Use --confirm {expected!r} for this exact message.',
-                file=sys.stderr,
-            )
-            return 2
         tam.delete_message(args.tam_index, args.message_index)
-        print('Applied:', description)
+        print('Applied:', _mutation_description(args))
         return 0
 
     raise AssertionError(args.command)
@@ -228,6 +246,9 @@ def _run(args: argparse.Namespace, tam: FritzTAM) -> int:
 
 def main() -> int:
     args = _parser().parse_args()
+    result = _preflight(args)
+    if result is not None:
+        return result
     tam = _connect(args)
     return _run(args, tam)
 
