@@ -47,11 +47,10 @@ The fritzconnection-package comes with a library to make some common tasks easie
    sources/getting_started
    sources/fritzconnection_api
    sources/library_modules
+   sources/fritztam
    sources/call_monitoring
    sources/further_reading
    sources/version_history
    sources/authors
    sources/license
-
-
 
