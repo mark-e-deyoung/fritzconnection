@@ -31,6 +31,9 @@ Example::
     # Use the stable message index returned by get_messages().
     tam.mark_message(index=0, message_index=messages[0].index, read=True)
 
+    # Deletion is permanent and requires the same explicit stable index.
+    tam.delete_message(index=0, message_index=messages[0].index)
+
 ``get_info()`` returns the values provided directly by the TR-064 ``GetInfo``
 action. ``get_list()`` returns a :class:`TAMList` with global status values and
 one :class:`TAMListItem` for each configured answering machine.
@@ -47,6 +50,11 @@ does not download recordings.
 ``mark_message()`` marks one explicitly selected message as read or unread. The
 ``message_index`` argument must be the stable index obtained from the message
 list; the method does not infer or search for a target message.
+
+``delete_message()`` permanently deletes one explicitly selected message. Both
+the answering-machine index and the stable message index are required. The
+method does not provide a bulk mode or infer a target from caller information,
+dates, names, or list positions.
 
 FritzTAM API
 ------------
