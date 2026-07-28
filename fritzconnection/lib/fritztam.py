@@ -39,8 +39,8 @@ def _set_url_parameter(url, name, value):
 
 class FritzTAM(AbstractLibraryBase):
     """
-    Provides read-only access to telephone answering machines and their
-    voicemail message lists.
+    Provides access to telephone answering machines and their voicemail
+    message lists.
 
     All parameters are optional. If given, they have the following meaning:
     `fc` is an instance of FritzConnection, `address` the ip of the
@@ -90,6 +90,26 @@ class FritzTAM(AbstractLibraryBase):
             url = _set_url_parameter(url, 'max', maximum)
         root = get_xml_root(url, session=self.fc.session)
         return TAMMessageCollection(root).messages
+
+    def mark_message(
+        self,
+        index: int,
+        message_index: int,
+        read: bool = True,
+    ) -> None:
+        """
+        Mark one voicemail message as read or unread.
+
+        *index* selects the answering machine and *message_index* is the
+        stable index from the message list. If *read* is False, the message
+        is marked as unread.
+        """
+        self._action(
+            'MarkMessage',
+            NewIndex=index,
+            NewMessageIndex=message_index,
+            NewMarkedAsRead=not read,
+        )
 
 
 @processor
