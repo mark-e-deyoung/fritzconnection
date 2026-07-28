@@ -23,7 +23,7 @@ def test_mark_message_read():
             {
                 'NewIndex': 1,
                 'NewMessageIndex': 17,
-                'NewMarkedAsRead': True,
+                'NewMarkedAsRead': False,  # inverted: router treats 0 as read
             },
         )
     ]
@@ -42,7 +42,7 @@ def test_mark_message_unread():
             {
                 'NewIndex': 0,
                 'NewMessageIndex': 7,
-                'NewMarkedAsRead': False,
+                'NewMarkedAsRead': True,  # inverted: router treats 1 as unread
             },
         )
     ]

@@ -108,7 +108,7 @@ class FritzTAM(AbstractLibraryBase):
             'MarkMessage',
             NewIndex=index,
             NewMessageIndex=message_index,
-            NewMarkedAsRead=read,
+            NewMarkedAsRead=not read,
         )
 
 
