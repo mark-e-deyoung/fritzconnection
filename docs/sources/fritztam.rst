@@ -21,6 +21,9 @@ Example::
             answering_machine.enabled,
         )
 
+    # Enable one explicitly selected answering machine.
+    tam.set_enabled(index=0, enabled=True)
+
     messages = tam.get_messages(index=0, maximum=25)
     for message in messages:
         print(message.index, message.Name, message.Date, message.path)
@@ -31,6 +34,9 @@ Example::
 ``get_info()`` returns the values provided directly by the TR-064 ``GetInfo``
 action. ``get_list()`` returns a :class:`TAMList` with global status values and
 one :class:`TAMListItem` for each configured answering machine.
+
+``set_enabled()`` changes only the answering machine selected by its explicit
+integer index. The method does not infer a target from a name or list order.
 
 ``get_messages()`` obtains the temporary message-list URL from the router and
 returns a list of :class:`TAMMessage` objects. A message's ``index`` property is
